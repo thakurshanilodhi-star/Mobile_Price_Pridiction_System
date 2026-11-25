@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Price Predictor | AI-Powered</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-mobile-alt"></i>
+                <h1>Mobile Price Predictor</h1>
+            </div>
+            <p class="subtitle">AI-powered mobile phone price range classification</p>
+            <div class="status-badge" id="apiStatus">
+                <span class="status-dot"></span>
+                <span class="status-text">Checking API...</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-grid">
+            <!-- Input Form -->
+            <section class="form-section glass-card">
+                <div class="section-header">
+                    <h2><i class="fas fa-sliders-h"></i> Mobile Specifications</h2>
+                    <button class="btn-secondary" onclick="loadSample()">
+                        <i class="fas fa-magic"></i> Load Sample
+                    </button>
+                </div>
+
+                <form id="predictForm" class="form-grid">
+                    <!-- Group 1: Performance -->
+                    <div class="form-group category">
+                        <label class="category-label"><i class="fas fa-microchip"></i> Performance</label>
+                        <div class="input-row">
+                            <div class="input-field">
+                                <label for="ram">RAM (MB)</label>
+                                <input type="range" id="ram" min="256" max="4000" value="2048" oninput="updateValue('ram')">
+                                <span class="value-display" id="ram-val">2048 MB</span>
+                            </div>
+                            <div class="input-field">
+                                <label for="n_cores">CPU Cores</label>
+                                <input type="range" id="n_cores" min="1" max="8" value="4" oninput="updateValue('n_cores')">
+                                <span class="value-display" id="n_cores-val">4 cores</span>
+                            </div>
+                            <div class="input-field">
+                                <label for="clock_speed">Clock Speed (GHz)</label>
+                                <input type="range" id="clock_speed" min="0.5" max="3.0" step="0.1" value="2.0" oninput="updateValue('clock_speed')">
+                                <span class="value-display" id="clock_speed-val">2.0 GHz</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 2: Display -->
+                    <div class="form-group category">
+                        <label class="category-label"><i class="fas fa-tv"></i> Display</label>
+                        <div class="input-row">
+                            <div class="input-field">
+                                <label for="px_height">Resolution Height</label>
+                                <input type="range" id="px_height" min="0" max="1960" value="1080" oninput="updateValue('px_height')">
+                                <span class="value-display" id="px_height-val">1080 px</span>
+                            </div>
+                            <div class="input-field">
+                                <label for="px_width">Resolution Width</label>
+                                <input type="range" id="px_width" min="500" max="2000" value="1920" oninput="updateValue('px_width')">
+                                <span class="value-display" id="px_width-val">1920 px</span>
+                            </div>
+                            <div class="input-field">
+                                <label for="sc_h">Screen Height (cm)</label>
+                                <input type="range" id="sc_h" min="5" max="19" value="14" oninput="updateValue('sc_h')">
+                                <span class="value-display" id="sc_h-val">14 cm</span>
+                            </div>
+                            <div class="input-field">
+                                <label for="sc_w">Screen Width (cm)</label>
+                                <input type="range" id="sc_w" min="0" max="18" value="7" oninput="updateValue('sc_w')">
+                                <span class="value-display" id="sc_w-val">7 cm</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 3: Camera -->
+                    <div class="form-group category">
+                        <label class="category-label"><i class="fas fa-camera"></i> Camera</label>
+                        <div class="input-row">
+                            <div class="input-field">
+                                <label for="pc">Primary Camera (MP)</label>
+                                <input type="range" id="pc" min="0" max="20" value="12" oninput="updateValue('pc')">
+                                <span class="value-display" id="pc-val">12 MP</span>
+                            </div>
+                            <div class="input-field">
+                                <label for="fc">Front Camera (MP)</label>
+                                <input type="range" id="fc" min="0" max="20" value="8" oninput="updateValue('fc')">
+                                <span class="value-display" id="fc-val">8 MP</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 4: Battery & Storage -->
+                    <div class="form-group category">
+                        <label class="category-label"><i class="fas fa-battery-full"></i> Battery & Storage</label>
+                        <div class="input-row">
+                            <div class="input-field">
+                                <label for="battery_power">Battery (mAh)</label>
+                                <input type="range" id="battery_power" min="500" max="2000" value="1500" oninput="updateValue('battery_power')">
+                                <span class="value-display" id="battery_power-val">1500 mAh</span>
+                            </div>
+                            <div class="input-field">
+                                <label for="int_memory">Internal Memory (GB)</label>
+                                <input type="range" id="int_memory" min="2" max="64" value="32" oninput="updateValue('int_memory')">
+                                <span class="value-display" id="int_memory-val">32 GB</span>
+                            </div>
+                            <div class="input-field">
+                                <label for="talk_time">Talk Time (hrs)</label>
+                                <input type="range" id="talk_time" min="2" max="20" value="12" oninput="updateValue('talk_time')">
+                                <span class="value-display" id="talk_time-val">12 hrs</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 5: Physical -->
+                    <div class="form-group category">
+                        <label class="category-label"><i class="fas fa-cube"></i> Physical</label>
+                        <div class="input-row">
+                            <div class="input-field">
+                                <label for="mobile_wt">Weight (g)</label>
+                                <input type="range" id="mobile_wt" min="80" max="250" value="150" oninput="updateValue('mobile_wt')">
+                                <span class="value-display" id="mobile_wt-val">150 g</span>
+                            </div>
+                            <div class="input-field">
+                                <label for="m_dep">Depth (cm)</label>
+                                <input type="range" id="m_dep" min="0.1" max="1.0" step="0.1" value="0.5" oninput="updateValue('m_dep')">
+                                <span class="value-display" id="m_dep-val">0.5 cm</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 6: Connectivity -->
+                    <div class="form-group category">
+                        <label class="category-label"><i class="fas fa-wifi"></i> Connectivity</label>
+                        <div class="toggle-row">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="blue" checked>
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-label">Bluetooth</span>
+                            </label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="dual_sim" checked>
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-label">Dual SIM</span>
+                            </label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="four_g" checked>
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-label">4G</span>
+                            </label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="three_g" checked>
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-label">3G</span>
+                            </label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="touch_screen" checked>
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-label">Touch Screen</span>
+                            </label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="wifi" checked>
+                                <span class="toggle-slider"></span>
+                                <span class="toggle-label">WiFi</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-brain"></i>
+                        <span>Predict Price Range</span>
+                        <div class="btn-shine"></div>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="result-card glass-card" id="resultCard">
+                    <div class="result-header">
+                        <div class="prediction-badge" id="predictionBadge">
+                            <i class="fas fa-tag"></i>
+                            <span id="predictionLabel">Medium Cost</span>
+                            <small id="predictionPriceRange">₹10,000 – ₹20,000</small>
+                        </div>
+                        <div class="confidence-ring">
+                            <svg viewBox="0 0 100 100">
+                                <circle class="ring-bg" cx="50" cy="50" r="45"/>
+                                <circle class="ring-progress" id="confidenceRing" cx="50" cy="50" r="45"/>
+                            </svg>
+                            <div class="confidence-text">
+                                <span id="confidenceValue">85</span>%
+                                <small>Confidence</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="probabilities-chart">
+                        <h3><i class="fas fa-chart-bar"></i> Price & Probability Distribution</h3>
+                        <div class="prob-bars">
+                            <div class="prob-bar">
+                                <label>Low Cost <small>(₹5,000 – ₹10,000)</small></label>
+                                <div class="bar-track">
+                                    <div class="bar-fill" id="bar-low" style="width: 0%"></div>
+                                </div>
+                                <span id="val-low">0%</span>
+                            </div>
+                            <div class="prob-bar">
+                                <label>Medium Cost <small>(₹10,000 – ₹20,000)</small></label>
+                                <div class="bar-track">
+                                    <div class="bar-fill" id="bar-medium" style="width: 0%"></div>
+                                </div>
+                                <span id="val-medium">0%</span>
+                            </div>
+                            <div class="prob-bar">
+                                <label>High Cost <small>(₹20,000 – ₹35,000)</small></label>
+                                <div class="bar-track">
+                                    <div class="bar-fill" id="bar-high" style="width: 0%"></div>
+                                </div>
+                                <span id="val-high">0%</span>
+                            </div>
+                            <div class="prob-bar">
+                                <label>Very High Cost <small>(₹35,000+)</small></label>
+                                <div class="bar-track">
+                                    <div class="bar-fill" id="bar-veryhigh" style="width: 0%"></div>
+                                </div>
+                                <span id="val-veryhigh">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="top-features">
+                        <h3><i class="fas fa-star"></i> Key Decision Factors</h3>
+                        <div class="features-grid" id="featuresGrid"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with <i class="fas fa-heart"></i> using FastAPI + Random Forest ML</p>
+            <p class="author">By Shani & Meenakshi Tripathi</p>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader">
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <div class="loader-ring"></div>
+            <p>Analyzing specifications...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
